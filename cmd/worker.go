@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/aungkokoye/go_app/cmd/api"
 	"github.com/aungkokoye/go_app/cmd/worker"
 	"github.com/spf13/cobra"
 )
@@ -20,4 +21,5 @@ var workerCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(workerCmd)
 	workerCmd.AddCommand(worker.UserSyncCmd)
+	workerCmd.AddCommand(api.ApiSyncCmd)
 }

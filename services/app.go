@@ -2,8 +2,15 @@ package services
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
+	"strings"
 
 	"github.com/aungkokoye/go_app/databases"
+	"github.com/aungkokoye/go_app/repositiories"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type AppInterface interface {
@@ -16,6 +23,8 @@ type App struct {
 }
 
 func NewApp(config Config) *App {
+
+	setLoggingLevel(config.LogLevel)
 
 	return &App{
 		Config:   config,
@@ -35,4 +44,28 @@ func (a *App) GetDatabase(db string) (*sql.DB, error) {
 	}
 
 	return a.database[db], nil
+}
+
+func (a *App) RunGin() {
+	router := gin.Default()
+
+	router.GET("/albums", repositiories.GetAlbums)
+	router.Run("localhost:8080")
+	fmt.Println("Running go_api_gin!")
+}
+
+func setLoggingLevel(level string) {
+	switch strings.ToLower(level) {
+	case "debug":
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	case "warn":
+		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	case "error":
+		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	default:
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
+
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+
 }

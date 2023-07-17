@@ -3,3 +3,5 @@ mysql:
   port: 3307
   user: root
   password: 
+
+loglevel: debug

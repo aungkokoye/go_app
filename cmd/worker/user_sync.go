@@ -5,6 +5,7 @@ import (
 
 	"github.com/aungkokoye/go_app/repositiories"
 	"github.com/aungkokoye/go_app/services"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -23,22 +24,22 @@ func main(cmd *cobra.Command, args []string) {
 	fmt.Println("calling User sync")
 
 	fileName := cmd.Flag("config").Value.String()
-	fmt.Println(fileName)
+	fmt.Printf("Getting config from %s \n", fileName)
 
 	config, err := services.NewConif(fileName)
 
 	if err != nil {
-		fmt.Printf("Error reading config file: %s", err)
+		log.Error().Msgf("Error reading config file: %s", err)
 	}
 
-	fmt.Printf("loading config: %v \n", config)
+	fmt.Printf("Loading config: %v", config)
 
 	app := services.NewApp(config)
 
 	mysql, err := app.GetDatabase("vivastreet_gb")
 
 	if err != nil {
-		fmt.Printf("Error Mysql connection: %s", err)
+		log.Error().Msgf("Error Mysql connection: %s\n", err)
 	}
 
 	repo := repositiories.NewUserRepository(mysql)
@@ -46,15 +47,15 @@ func main(cmd *cobra.Command, args []string) {
 	result, err := repo.ContactSync()
 
 	if err != nil {
-		fmt.Printf("Error Mysql connection: %s", err)
+		log.Error().Msgf("Error Mysql connection: %s", err)
 	}
 
 	for key, value := range result {
 
-		fmt.Printf("[ UserId : %d, UserEmail : %s, Username : %s ]\n", value.UserID, key, value.Username)
+		log.Debug().Msgf("[ UserId : %d, UserEmail : %s, Username : %s ]\n", value.UserID, key, value.Username)
 
 	}
 
-	fmt.Println("End")
+	log.Info().Msg("End")
 
 }

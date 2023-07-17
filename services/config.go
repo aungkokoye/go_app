@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	MysqlDB databases.ConfigMysql `yaml:"mysql"`
+	MysqlDB  databases.ConfigMysql `yaml:"mysql"`
+	LogLevel string                `yaml:"loglevel"`
 }
 
 func NewConif(fileNmae string) (Config, error) {
